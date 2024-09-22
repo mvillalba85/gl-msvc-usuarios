@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,8 +26,14 @@ public class UserController {
         return userDTO != null ? ResponseEntity.ok(userDTO) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAll() {
+        final List<UserDTO> userDTOS = userService.findAll();
+        return userDTOS != null ? ResponseEntity.ok(userDTOS) : ResponseEntity.noContent().build();
+    }
 
-    @PostMapping("sing-up")
+
+    @PostMapping
     public ResponseEntity<ResponseDTO> createUser(@RequestBody User user) {
         ResponseDTO resp = new ResponseDTO();
         try{

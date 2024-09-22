@@ -17,6 +17,10 @@ public class UserRepository {
         return userCrudRepository.findById(id).orElse(null);
     }
 
+    public List<User> findAll() {
+        return (List<User>) userCrudRepository.findAll();
+    }
+
     public User save(User user){
         return userCrudRepository.save(user);
     }

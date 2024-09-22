@@ -9,5 +9,5 @@ import java.util.List;
 public interface UserService {
     UserDTO save(User user);
     UserDTO findById(Long id);
-
+    List<UserDTO> findAll();
 }
