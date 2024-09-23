@@ -28,10 +28,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        super.configure(http);
         http.csrf().disable() //se deshabilitan las peticiones cruzadas
                 .authorizeRequests() //Autoriza las peticiones
-                .antMatchers("/**/authenticate").permitAll() //que permitir: todas las peticiones que terminen en authenticate
+                .antMatchers("**/authenticate").permitAll() //que permitir: todas las peticiones que terminen en authenticate
+//                .antMatchers("**/api/auth/**").permitAll()
                 .anyRequest().authenticated() //Cualquier otra peticion necesita de autenticación.
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
