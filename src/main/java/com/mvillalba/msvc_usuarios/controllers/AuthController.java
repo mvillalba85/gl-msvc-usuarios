@@ -33,13 +33,13 @@ public class AuthController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> createToken(@RequestBody AuthenticationRequestDTO request){
         try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-//            String jwt = jwtUtil.generateToken(userDetails);
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
             return new ResponseEntity<>(new AuthenticationResponseDTO(jwt), HttpStatus.OK);
         }catch (BadCredentialsException e){
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 

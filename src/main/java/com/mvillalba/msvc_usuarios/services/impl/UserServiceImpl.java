@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO findById(Long id) {
+    public UserDTO findById(UUID id) {
         final User user = userRepository.findById(id);
         if(user != null){
             return mapperUser(user);
@@ -52,29 +54,34 @@ public class UserServiceImpl implements UserService {
     public UserDTO save(User user) {
         user.setCreated(LocalDateTime.now());
         user.setActive(Boolean.TRUE);
-        user.setToken(createToken(user.getName(), user.getPassword()));
+        user.setToken(createToken(user.getEmail(), user.getPassword()));
         final User save = userRepository.save(user);
         final UserDTO userDTO = mapperUser(save);
 
         return userDTO;
-
-
     }
 
     private String createToken(String username, String password){
-//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//        String jwt = jwtUtil.generateToken(userDetails);
         String jwt = jwtUtil.generateToken(username);
         return jwt;
     }
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> findAll() {
         return userRepository.findAll().stream()
                 .map(u -> mapperUser(u)).collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public UserDTO findByEmail(String token) {
+        final String email = jwtUtil.extractUsername(token);
+        return userRepository.findByEmail(email).map(u -> mapperUser(u)).orElse(null);
+    }
+
+
 
     private UserDTO mapperUser(User user){
         final UserDTO userDTO = new UserDTO();

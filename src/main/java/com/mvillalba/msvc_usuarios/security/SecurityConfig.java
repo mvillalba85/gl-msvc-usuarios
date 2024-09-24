@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
@@ -30,13 +32,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable() //se deshabilitan las peticiones cruzadas
                 .authorizeRequests() //Autoriza las peticiones
-                .antMatchers("**/authenticate").permitAll() //que permitir: todas las peticiones que terminen en authenticate
+                .antMatchers("/**/authenticate", "/**/users/sign-up").permitAll() //que permitir: todas las peticiones que terminen en authenticate
 //                .antMatchers("**/api/auth/**").permitAll()
                 .anyRequest().authenticated() //Cualquier otra peticion necesita de autenticación.
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilterRequest, UsernamePasswordAuthenticationFilter.class);
+//                .build();
 
-        http.addFilterBefore(jwtFilterRequest, UsernamePasswordAuthenticationFilter.class);
+
+//        http.addFilterBefore(jwtFilterRequest, UsernamePasswordAuthenticationFilter.class);
+
     }
 
     //Permite que spring controle la autenticación
@@ -44,5 +51,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    protected AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+//        return super.authenticationManager();
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }

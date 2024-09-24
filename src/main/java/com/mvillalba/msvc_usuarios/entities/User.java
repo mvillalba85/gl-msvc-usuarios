@@ -5,8 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "USERS")
@@ -15,11 +17,12 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
-public class User {
+public class User implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
     @Column(name = "ID")
-    private Long id;
+    private UUID id;
 
     @NotBlank
     @Column(name = "NAME")

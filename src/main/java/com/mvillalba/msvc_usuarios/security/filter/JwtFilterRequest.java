@@ -15,16 +15,25 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtFilterRequest extends OncePerRequestFilter {
     private static final String STR_BEARER = "Bearer ";
+
+    private final List<String> ignorePaths = Arrays.asList("/auth/authenticate", "/users/sign-up");
 
     @Autowired
     private JWTUtil jwtUtil;
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return ignorePaths.stream().anyMatch(path -> request.getServletPath().contains(path));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,7 +57,5 @@ public class JwtFilterRequest extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         }
-//        filterChain.doFilter(request, response);
-        return ;
     }
 }
