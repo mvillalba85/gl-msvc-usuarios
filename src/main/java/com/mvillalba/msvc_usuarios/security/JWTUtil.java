@@ -1,9 +1,12 @@
 package com.mvillalba.msvc_usuarios.security;
 
+import com.mvillalba.msvc_usuarios.services.impl.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +17,8 @@ import java.util.Map;
 
 @Component
 public class JWTUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JWTUtil.class);
+
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
 

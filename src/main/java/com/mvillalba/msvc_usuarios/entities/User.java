@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,10 +35,10 @@ public class User implements Serializable {
     private String email;
 
     @NotBlank
+    @Pattern(regexp = "^(?=.*[A-Z])(?=(.*\\d){2}).{8,12}$", message = "La contraseña debe tener al menos una mayúscula y dos números.")
     @Column(name = "PASSWORD")
     private String password;
 
-//    @OneToMany(cascade = CascadeType.ALL)
     @ElementCollection
     private List<Phone> phones;
 

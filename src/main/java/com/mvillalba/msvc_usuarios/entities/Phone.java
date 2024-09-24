@@ -12,9 +12,9 @@ import javax.persistence.Embeddable;
 @Getter
 public class Phone {
     @Column(name = "NUMBER_PHONE")
-    private String number;
+    private Long number;
     @Column(name = "CITYCODE_PHONE")
-    private String cityCode;
+    private Integer cityCode;
     @Column(name = "COUNTRYCODE_PHONE")
     private String countryCode;
 

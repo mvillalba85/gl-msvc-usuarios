@@ -1,9 +1,10 @@
 package com.mvillalba.msvc_usuarios.services.impl;
 
+import com.mvillalba.msvc_usuarios.entities.User;
+import com.mvillalba.msvc_usuarios.repositories.UserRepository;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,17 +12,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import org.slf4j.Logger;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(UserDetailServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailServiceImpl.class);
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return new User("mail@mail.com", passwordEncoder.encode("1234"), new ArrayList<>());
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el usuario con el email: " + email));
+
+        return  new org.springframework.security.core.userdetails.User(
+                user.getEmail(), passwordEncoder.encode(user.getPassword()), new ArrayList<>());
+
     }
 }

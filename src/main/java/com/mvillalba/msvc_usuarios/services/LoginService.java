@@ -1,8 +1,8 @@
 package com.mvillalba.msvc_usuarios.services;
 
-import com.mvillalba.msvc_usuarios.entities.User;
+import com.mvillalba.msvc_usuarios.dto.UserDTO;
 
 public interface LoginService {
 
-    User login(String email);
+    UserDTO login(String email);
 }
