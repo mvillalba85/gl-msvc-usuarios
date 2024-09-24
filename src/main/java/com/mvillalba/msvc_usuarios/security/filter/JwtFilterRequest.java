@@ -1,6 +1,7 @@
 package com.mvillalba.msvc_usuarios.security.filter;
 
 import com.mvillalba.msvc_usuarios.security.JWTUtil;
+import com.mvillalba.msvc_usuarios.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,9 @@ public class JwtFilterRequest extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return ignorePaths.stream().anyMatch(path -> request.getServletPath().contains(path));
@@ -53,6 +57,7 @@ public class JwtFilterRequest extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    
                 }
             }
             filterChain.doFilter(request, response);

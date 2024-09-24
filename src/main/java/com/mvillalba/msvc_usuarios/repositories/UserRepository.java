@@ -24,7 +24,7 @@ public class UserRepository {
     }
 
     public User save(User user){
-        user.setId(UUID.randomUUID());
+//        user.setId(UUID.randomUUID());
         return userCrudRepository.save(user);
     }
 

@@ -7,6 +7,7 @@ import com.mvillalba.msvc_usuarios.dto.authentication.AuthenticationRequestDTO;
 import com.mvillalba.msvc_usuarios.dto.authentication.AuthenticationResponseDTO;
 import com.mvillalba.msvc_usuarios.entities.User;
 import com.mvillalba.msvc_usuarios.security.JWTUtil;
+import com.mvillalba.msvc_usuarios.services.LoginService;
 import com.mvillalba.msvc_usuarios.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +43,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable UUID id) {
-        final UserDTO userDTO = userService.findById(id);
-        return userDTO != null ? ResponseEntity.ok(userDTO) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAll() {
-        final List<UserDTO> userDTOS = userService.findAll();
-        return userDTOS != null ? ResponseEntity.ok(userDTOS) : ResponseEntity.noContent().build();
-    }
-
+    @Autowired
+    private LoginService loginService;
 
     @PostMapping("sign-up")
     public ResponseEntity<ResponseDTO> createUser(@RequestBody User user) {
@@ -71,13 +62,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO> createToken(@RequestHeader("Authorization") String token){
+    public ResponseEntity<User> login(@RequestHeader("Authorization") String token){
         try{
-            final UserDTO userDTO = userService.findByEmail(token);
-            if(userDTO != null){
-                return new ResponseEntity<>(new ResponseDTO(true, userDTO), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(new ResponseDTO(false, null), HttpStatus.NOT_FOUND);
+            final User user = loginService.login(token);
+                return new ResponseEntity<>(user, HttpStatus.OK);
         }catch (BadCredentialsException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

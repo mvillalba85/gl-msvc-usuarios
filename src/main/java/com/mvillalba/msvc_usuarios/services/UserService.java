@@ -13,4 +13,6 @@ public interface UserService {
 
     UserDTO findByEmail(String token);
 
+    void updateLastLogin(String email);
+
 }
