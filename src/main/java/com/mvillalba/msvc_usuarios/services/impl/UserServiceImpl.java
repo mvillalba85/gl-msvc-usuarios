@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService, LoginService {
@@ -41,6 +43,9 @@ public class UserServiceImpl implements UserService, LoginService {
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new UserException("Ya existe un usuario con el mismo email");
         }
+        if(!isValid(user.getPassword())){
+            throw new UserException("La contraseña debe tener al menos una mayúscula y dos números.");
+        }
 
         user.setCreated(LocalDateTime.now());
         user.setActive(Boolean.TRUE);
@@ -50,6 +55,13 @@ public class UserServiceImpl implements UserService, LoginService {
         final UserDTO userDTO = mapperUser(save);
 
         return userDTO;
+    }
+
+    public static boolean isValid(String password) {
+        String regexp = "^(?=.*[A-Z])(?=(.*\\d){2}).{8,12}$";
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
 
     private String createToken(String username, String password){

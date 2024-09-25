@@ -1,20 +1,20 @@
 package com.mvillalba.msvc_usuarios.dto;
 
-import com.mvillalba.msvc_usuarios.dto.response.Response;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-public class ErrorDTO extends Response {
-    private LocalDateTime timestamp;
+@Data
+public class ErrorDTO {
+    private Timestamp timestamp;
     private Integer codigo;
     private String detail;
 
+    public ErrorDTO(Timestamp timestamp, Integer codigo, String detail) {
+        this.timestamp = timestamp;
+        this.codigo = codigo;
+        this.detail = detail;
+    }
 }

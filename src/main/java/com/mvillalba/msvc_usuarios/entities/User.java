@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,17 +24,16 @@ public class User implements Serializable {
     @Column(name = "ID")
     private UUID id;
 
-    @NotEmpty(message = "El nombre no puede estar vacío")
     @Column(name = "NAME")
     private String name;
 
-    @Email(message = "El correo electrónico no es válido")
+    @Email(message = "Correo electrónico inválido")
     @NotEmpty(message = "El correo electrónico no puede estar vacío")
     @Column(name = "EMAIL", unique = true)
     private String email;
 
     @NotEmpty(message = "La contraseña no puede estar vacío")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=(.*\\d){2}).{8,12}$", message = "La contraseña debe tener al menos una mayúscula y dos números.")
+//    @Pattern(regexp = "^(?=.*[A-Z])(?=(.*\\d){2}).{8,12}$", message = "La contraseña debe tener al menos una mayúscula y dos números.")
     @Column(name = "PASSWORD")
     private String password;
 
@@ -55,6 +52,5 @@ public class User implements Serializable {
     @Column(name = "ACTIVE")
     private Boolean active;
 
-    // Getters and Setters
 }
 
