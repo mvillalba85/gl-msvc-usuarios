@@ -31,9 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable() //se deshabilitan las peticiones cruzadas
-                .authorizeRequests() //Autoriza las peticiones
-                .antMatchers("/**/authenticate", "/**/users/sign-up").permitAll() //que permitir: todas las peticiones que terminen en authenticate
-//                .antMatchers("**/api/auth/**").permitAll()
+                .headers().frameOptions().sameOrigin() // configuración para visualizar la consola h2
+                .and().authorizeRequests()
+                .antMatchers("/**/authenticate", "/**/users/sign-up", "/h2-console/**")
+                .permitAll() //que permitir: todas las peticiones que terminen en authenticate
                 .anyRequest().authenticated() //Cualquier otra peticion necesita de autenticación.
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

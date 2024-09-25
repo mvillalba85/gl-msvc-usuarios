@@ -2,6 +2,7 @@ package com.mvillalba.msvc_usuarios.services.impl;
 
 import com.mvillalba.msvc_usuarios.dto.UserDTO;
 import com.mvillalba.msvc_usuarios.entities.User;
+import com.mvillalba.msvc_usuarios.exceptions.UserException;
 import com.mvillalba.msvc_usuarios.mapper.util.UtilMapConverter;
 import com.mvillalba.msvc_usuarios.repositories.UserRepository;
 import com.mvillalba.msvc_usuarios.security.JWTUtil;
@@ -36,7 +37,11 @@ public class UserServiceImpl implements UserService, LoginService {
 
     @Override
     @Transactional
-    public UserDTO save(User user) {
+    public UserDTO signUp(User user) {
+        if(userRepository.findByEmail(user.getEmail()).isPresent()){
+            throw new UserException("Ya existe un usuario con el mismo email");
+        }
+
         user.setCreated(LocalDateTime.now());
         user.setActive(Boolean.TRUE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

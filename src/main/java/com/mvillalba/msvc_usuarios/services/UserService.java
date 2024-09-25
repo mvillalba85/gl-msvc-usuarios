@@ -4,5 +4,5 @@ import com.mvillalba.msvc_usuarios.dto.UserDTO;
 import com.mvillalba.msvc_usuarios.entities.User;
 
 public interface UserService {
-    UserDTO save(User user);
+    UserDTO signUp(User user);
 }

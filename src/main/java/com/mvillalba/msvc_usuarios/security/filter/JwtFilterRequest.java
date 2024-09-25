@@ -23,7 +23,7 @@ import java.util.List;
 public class JwtFilterRequest extends OncePerRequestFilter {
     private static final String STR_BEARER = "Bearer ";
 
-    private final List<String> ignorePaths = Arrays.asList("/auth/authenticate", "/users/sign-up");
+    private final List<String> ignorePaths = Arrays.asList("/auth/authenticate", "/users/sign-up", "/h2-console");
 
     @Autowired
     private JWTUtil jwtUtil;
