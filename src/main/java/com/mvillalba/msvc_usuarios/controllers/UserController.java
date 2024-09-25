@@ -36,12 +36,9 @@ public class UserController {
 
     @Validated
     @PostMapping("sign-up")
-    public ResponseEntity<UserResponseRest> signUp(@Valid @RequestBody User user, BindingResult result) {
+    public ResponseEntity<UserResponseRest> signUp(@Valid @RequestBody User user) {
         UserResponseRest responseRest = new UserResponseRest();
         try{
-            if(result.hasErrors()){
-                return new ResponseEntity<>(getErrorDetails(result, responseRest), HttpStatus.BAD_REQUEST);
-            }
             UserDTO userDTO = userService.signUp(user);
             responseRest.setUserDTO(userDTO);
             return new ResponseEntity<>(responseRest, HttpStatus.CREATED);
