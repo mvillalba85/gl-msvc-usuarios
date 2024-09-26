@@ -6,7 +6,6 @@ import com.mvillalba.msvc_usuarios.exceptions.UserException;
 import com.mvillalba.msvc_usuarios.mapper.util.UtilMapConverter;
 import com.mvillalba.msvc_usuarios.repositories.UserRepository;
 import com.mvillalba.msvc_usuarios.security.JWTUtil;
-import com.mvillalba.msvc_usuarios.services.LoginService;
 import com.mvillalba.msvc_usuarios.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class UserServiceImpl implements UserService, LoginService {
+public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired

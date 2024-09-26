@@ -11,21 +11,21 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseRest {
 
-    List<ErrorDTO> errores;
+    List<ErrorDTO> error;
 
-    public List<ErrorDTO> getErrores() {
-        return errores;
+    public List<ErrorDTO> getError() {
+        return error;
     }
 
-    public void setErrores(List<ErrorDTO> errores) {
-        this.errores = errores;
+    public void setError(List<ErrorDTO> error) {
+        this.error = error;
     }
 
     public void addError(ErrorDTO error){
-        if(errores == null){
-            errores = new ArrayList<>();
+        if(this.error == null){
+            this.error = new ArrayList<>();
         }
-        errores.add(error);
+        this.error.add(error);
     }
 
 }

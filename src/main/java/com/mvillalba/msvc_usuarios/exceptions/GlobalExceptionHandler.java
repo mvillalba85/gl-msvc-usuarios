@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             Integer codigo = HttpStatus.BAD_REQUEST.value();
 
-            ErrorDTO errorDetail = new ErrorDTO(Timestamp.from(Instant.now()), codigo, fieldName + ": " + errorMessage);
+            ErrorDTO errorDetail = new ErrorDTO(Timestamp.from(Instant.now()), codigo, errorMessage);
             responseError.addError(errorDetail);
         });
 
