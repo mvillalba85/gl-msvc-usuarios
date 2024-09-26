@@ -6,5 +6,5 @@ import com.mvillalba.msvc_usuarios.entities.User;
 public interface UserService {
     UserDTO signUp(User user);
 
-    UserDTO login(String email);
+    UserDTO login(String token);
 }
