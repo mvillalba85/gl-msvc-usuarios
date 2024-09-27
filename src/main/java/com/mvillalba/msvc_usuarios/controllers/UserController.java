@@ -56,6 +56,11 @@ public class UserController {
             UserDTO userDTO = userService.login(token);
             responseRest.setUserDTO(userDTO);
             return new ResponseEntity<>(responseRest, HttpStatus.OK);
+        }catch (UserException e){
+            e.printStackTrace();
+            ErrorDTO errorDTO = new ErrorDTO(Timestamp.from(Instant.now()), HttpStatus.FORBIDDEN.value(), e.getMessage());
+            responseRest.addError(errorDTO);
+            return new ResponseEntity<>(responseRest, HttpStatus.BAD_REQUEST);
         }catch (BadCredentialsException e){
             e.printStackTrace();
             ErrorDTO errorDTO = new ErrorDTO(Timestamp.from(Instant.now()), HttpStatus.BAD_REQUEST.value(), e.getMessage());

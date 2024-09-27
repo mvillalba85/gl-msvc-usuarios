@@ -46,14 +46,23 @@ public class UserServiceImpl implements UserService {
             throw new UserException("La contraseña debe tener al menos una mayúscula y dos números.");
         }
 
-        user.setCreated(LocalDateTime.now());
-        user.setActive(Boolean.TRUE);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setToken(createToken(user.getEmail(), user.getPassword()));
+        buildUser(user);
+
         final User save = userRepository.save(user);
         final UserDTO userDTO = mapperUser(save);
 
         return userDTO;
+    }
+
+    private void buildUser(User user) {
+        user.setCreated(LocalDateTime.now());
+        user.setActive(Boolean.TRUE);
+        user.setPassword(encryptPassword(user));
+        user.setToken(createToken(user.getEmail(), user.getPassword()));
+    }
+
+    private String encryptPassword(User user) {
+        return passwordEncoder.encode(user.getPassword());
     }
 
     public static boolean isValid(String password) {
@@ -75,6 +84,10 @@ public class UserServiceImpl implements UserService {
         final String email = jwtUtil.extractUsername(jwt);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new BadCredentialsException ("Usuario no encontrado"));
+
+        if(!Boolean.TRUE.equals(user.getActive())){
+            throw new UserException("Usuario no activo");
+        }
         user.setLastLogin(LocalDateTime.now());
         User userUpdated = userRepository.save(user);
 

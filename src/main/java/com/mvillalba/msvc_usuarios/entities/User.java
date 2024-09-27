@@ -27,13 +27,12 @@ public class User implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @Email(message = "Correo electrónico inválido")
     @NotEmpty(message = "El correo electrónico no puede estar vacío")
+    @Email(message = "Correo electrónico inválido")
     @Column(name = "EMAIL", unique = true)
     private String email;
 
     @NotEmpty(message = "La contraseña no puede estar vacío")
-//    @Pattern(regexp = "^(?=.*[A-Z])(?=(.*\\d){2}).{8,12}$", message = "La contraseña debe tener al menos una mayúscula y dos números.")
     @Column(name = "PASSWORD")
     private String password;
 
