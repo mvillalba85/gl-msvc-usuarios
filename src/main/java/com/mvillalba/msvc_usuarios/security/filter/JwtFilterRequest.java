@@ -45,19 +45,18 @@ public class JwtFilterRequest extends OncePerRequestFilter {
 
         if(authorizationHeader != null && authorizationHeader.startsWith(STR_BEARER)){
             String jwt = authorizationHeader.substring(STR_BEARER.length());
-            String username = jwtUtil.extractUsername(jwt);
+            String email = jwtUtil.extractUsername(jwt);
 
             //Se validar que el usuario no esté en la aplicacion y que no esté debidamente logueado
             //Verifica que en el contexto de la aplicacion no exista autenticación para este usuario
-            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-
                 }
             }
             filterChain.doFilter(request, response);

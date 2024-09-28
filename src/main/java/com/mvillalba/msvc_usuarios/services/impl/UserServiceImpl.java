@@ -11,16 +11,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -58,7 +62,10 @@ public class UserServiceImpl implements UserService {
         user.setCreated(LocalDateTime.now());
         user.setActive(Boolean.TRUE);
         user.setPassword(encryptPassword(user));
-        user.setToken(createToken(user.getEmail(), user.getPassword()));
+//        user.setToken(createToken(user.getEmail(), user.getPassword()));
+        String tokenJwt = jwtUtil.generateToken(user.getEmail());
+        user.setToken(tokenJwt);
+        user.setToken(createToken(user.getEmail()));
     }
 
     private String encryptPassword(User user) {
@@ -77,6 +84,11 @@ public class UserServiceImpl implements UserService {
         return jwt;
     }
 
+    private String createToken(String email){
+        String jwt = jwtUtil.generateToken(email);
+        return jwt;
+    }
+
     @Override
     @Transactional
     public UserDTO login(String token) {
@@ -90,7 +102,9 @@ public class UserServiceImpl implements UserService {
         }
         user.setLastLogin(LocalDateTime.now());
         User userUpdated = userRepository.save(user);
-
+        if(userUpdated == null){
+            throw new UserException("Error al intentar guardar el usuario");
+        }
         return mapperUser(userUpdated);
     }
 
@@ -109,4 +123,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el usuario con el email: " + email));
+
+        return  new org.springframework.security.core.userdetails.User(
+                user.getEmail(), user.getPassword(), new ArrayList<>());
+
+    }
 }

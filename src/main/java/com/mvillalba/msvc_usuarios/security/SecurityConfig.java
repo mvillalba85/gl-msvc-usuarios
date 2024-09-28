@@ -22,18 +22,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilterRequest jwtFilterRequest;
 
-    @Override
+    /*@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        super.configure(auth);
         auth.userDetailsService(userDetailsService);
-    }
+    }*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable() //se deshabilitan las peticiones cruzadas
                 .headers().frameOptions().sameOrigin() // configuración para visualizar la consola h2
                 .and().authorizeRequests()
-                .antMatchers("/**/authenticate", "/**/users/sign-up", "/h2-console/**")
+                .antMatchers("/**/users/sign-up", "/h2-console/**")
                 .permitAll() //que permitir: todas las peticiones que terminen en authenticate
                 .anyRequest().authenticated() //Cualquier otra peticion necesita de autenticación.
                 .and()

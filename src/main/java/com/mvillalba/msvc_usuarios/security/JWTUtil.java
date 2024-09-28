@@ -22,9 +22,9 @@ public class JWTUtil {
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
 
-    public String generateToken(String username) {
+    public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        return createToken(claims, email);
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -41,6 +41,7 @@ public class JWTUtil {
     public boolean validateToken(String token, UserDetails userDetails){
         return userDetails.getUsername().equals(extractUsername(token)) && !isTokenExpired(token);
     }
+
 
     public String extractUsername(String token) {
         return getClaims(token).getSubject();
