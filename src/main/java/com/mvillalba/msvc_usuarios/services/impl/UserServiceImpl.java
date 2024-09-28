@@ -79,11 +79,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return matcher.matches();
     }
 
-    private String createToken(String username, String password){
-        String jwt = jwtUtil.generateToken(username);
-        return jwt;
-    }
-
     private String createToken(String email){
         String jwt = jwtUtil.generateToken(email);
         return jwt;
