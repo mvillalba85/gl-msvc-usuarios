@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +51,13 @@ public class User implements Serializable {
 
     @Column(name = "ACTIVE")
     private Boolean active;
+
+    public void addPhone(Phone phone){
+        if(phones == null){
+            phones = new ArrayList<>();
+        }
+        phones.add(phone);
+    }
 
 }
 

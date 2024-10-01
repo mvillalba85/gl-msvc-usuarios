@@ -39,6 +39,17 @@ test{
     useJUnitPlatform()
 }
 
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/GlobalExceptionHandler.class'  // Clase principal
+//                    '**/dto/**'         // Excluir todas las clases en un paquete
+            ])
+        }))
+    }
+}
+
 group = 'com.mvillalba'
 version = '1.0'
 description = 'msvc-usuarios'
