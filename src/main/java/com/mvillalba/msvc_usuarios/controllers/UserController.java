@@ -60,7 +60,7 @@ public class UserController {
             e.printStackTrace();
             ErrorDTO errorDTO = new ErrorDTO(Timestamp.from(Instant.now()), HttpStatus.FORBIDDEN.value(), e.getMessage());
             responseRest.addError(errorDTO);
-            return new ResponseEntity<>(responseRest, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(responseRest, HttpStatus.FORBIDDEN);
         }catch (BadCredentialsException e){
             e.printStackTrace();
             ErrorDTO errorDTO = new ErrorDTO(Timestamp.from(Instant.now()), HttpStatus.BAD_REQUEST.value(), e.getMessage());

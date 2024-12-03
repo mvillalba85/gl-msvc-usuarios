@@ -1,0 +1,45 @@
+#version: '3.8'
+
+services:
+  msvc-usuarios:
+    build:
+      context: .  # Apunta a la subcarpeta correcta
+      dockerfile: Dockerfile  # Asegúrate de que sea el nombre correcto del Dockerfile
+    image: msvc-usuarios:latest  # Nombre de la imagen, puedes personalizarlo
+    container_name: msvc-usuarios-container
+    ports:
+      - "8080:8080"  # Mapea el puerto 8080 del contenedor al puerto 8080 de tu máquina
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev  # Perfil de Spring Boot (ajústalo si es necesario)
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1  # URL de la base de datos H2
+      - SPRING_DATASOURCE_USERNAME=sa  # Usuario de la base de datos
+      - SPRING_DATASOURCE_PASSWORD=  # Contraseña de la base de datos (vacío para H2 por defecto)
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect  # Dialecto de Hibernate para H2
+      - SPRING_H2_CONSOLE_ENABLED=true  # Habilitar la consola H2 (opcional, si la necesitas)
+    
+      #- SPRING_PROFILES_ACTIVE=dev  # Establece las variables de entorno necesarias para la app
+      #- DATABASE_URL= jdbc:h2:mem:testdb?createDataBaseIfNotExist=true&serverTimezone=UTC;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      #- DATABASE_USERNAME= sa
+      #- DATABASE_PASSWORD=
+    #restart:  always
+    restart: unless-stopped  # Configura el reinicio automático del contenedor
+    #depends_on:
+     # - h2db  # Asegura que el contenedor de la base de datos se inicie antes que el de la app
+
+  # h2db:
+    # image: oscarfonts/h2  # Usar la imagen oficial de MySQL
+    # container_name: h2db
+    # ports:
+      # - "9092:9092"  # Puerto estándar para H2 Console (si lo necesitas para administración)
+    # volumes:
+      # - ./h2data:/opt/h2-data  # Montar un volumen persistente en el contenedor
+    # networks:
+      # - app-network
+
+  # networks:
+    # app-network:
+      # driver: bridge  # Define la red personalizada
+#volumes:
+  #mysql_data:  # Persistencia de datos de la base de datos
+
+#DB_PASSWORD=;DB_USER_NAME=sa;DB_URL=jdbc:h2:mem:testdb;DB_PLATFORM=org.hibernate.dialect.H2Dialect

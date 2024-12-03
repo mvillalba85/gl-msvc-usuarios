@@ -33,7 +33,7 @@ public class User implements Serializable {
     @Column(name = "EMAIL", unique = true)
     private String email;
 
-    @NotEmpty(message = "La contraseña no puede estar vacío")
+    @NotEmpty(message = "La contraseña no puede estar vacía")
     @Column(name = "PASSWORD")
     private String password;
 

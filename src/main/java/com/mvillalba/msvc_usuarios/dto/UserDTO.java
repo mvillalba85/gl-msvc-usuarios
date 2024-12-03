@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
-@ToString
 public class UserDTO extends ResponseRest {
     private UUID id;
     private String created;

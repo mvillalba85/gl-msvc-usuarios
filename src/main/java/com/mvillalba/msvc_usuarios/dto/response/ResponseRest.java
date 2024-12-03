@@ -17,10 +17,6 @@ public class ResponseRest {
         return error;
     }
 
-    public void setError(List<ErrorDTO> error) {
-        this.error = error;
-    }
-
     public void addError(ErrorDTO error){
         if(this.error == null){
             this.error = new ArrayList<>();

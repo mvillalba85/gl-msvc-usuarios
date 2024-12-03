@@ -1,9 +1,7 @@
 package com.mvillalba.msvc_usuarios.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mvillalba.msvc_usuarios.dto.UserDTO;
-import com.mvillalba.msvc_usuarios.dto.response.ResponseRest;
 import com.mvillalba.msvc_usuarios.dto.response.UserResponseRest;
 import com.mvillalba.msvc_usuarios.entities.Phone;
 import com.mvillalba.msvc_usuarios.entities.User;
@@ -16,29 +14,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-//@WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @InjectMocks
@@ -84,8 +73,6 @@ class UserControllerTest {
 
     @Test
     void testSignUpSuccess() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         UserResponseRest responseRest = new UserResponseRest();
         responseRest.setUserDTO(userDTO);
 
@@ -103,8 +90,6 @@ class UserControllerTest {
 
     @Test
     void testSignUpUserException() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         String errorMessage = "Ya existe un usuario con el mismo email";
 
         when(userService.signUp(any(User.class))).thenThrow(new UserException(errorMessage));
@@ -120,8 +105,6 @@ class UserControllerTest {
 
     @Test
     void testSignUpUnexpectedException() throws Exception {
-//        MockHttpServletRequest request = new MockHttpServletRequest();
-//        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         String errorMessage = "Error inesperado: No fue posible crear el Usuario";
 
         when(userService.signUp(any(User.class))).thenThrow(new RuntimeException(errorMessage));
@@ -137,6 +120,49 @@ class UserControllerTest {
 
 
     @Test
-    void loginSuccess() {
+    void testLoginSuccess() throws Exception {
+        String token = "tokenOk";
+        when(userService.login(token)).thenReturn(userDTO);
+
+        mockMvc.perform(post("/users/login")
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userDTO").exists());
+    }
+
+    @Test
+    public void testLoginUserException() throws Exception {
+        String token = "invalid_token";
+
+        when(userService.login(token)).thenThrow(new UserException("Usuario no activo"));
+
+        mockMvc.perform(post("/users/login")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error[0].detail").value("Usuario no activo"));
+    }
+
+    @Test
+    public void testLoginBadCredentialsException() throws Exception {
+        String token = "bad_credentials_token";
+
+        when(userService.login(token)).thenThrow(new BadCredentialsException("Usuario no encontrado"));
+
+        mockMvc.perform(post("/users/login")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error[0].detail").value("Usuario no encontrado"));
+    }
+
+    @Test
+    public void testLoginUnexpectedException() throws Exception {
+        String token = "unexpected_error_token";
+
+        when(userService.login(token)).thenThrow(new RuntimeException("Se produjo un error inesperado"));
+
+        mockMvc.perform(post("/users/login")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error[0].detail").value("Se produjo un error inesperado"));
     }
 }
